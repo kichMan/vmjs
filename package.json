@@ -1,0 +1,23 @@
+{
+  "name": "vmjs",
+  "version": "0.1.0",
+  "description": "Uxn virtual machine implementation in TypeScript",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/examples/hello.js",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "uxn",
+    "virtual-machine",
+    "emulator"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^5.6.0"
+  }
+}
