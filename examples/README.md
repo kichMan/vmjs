@@ -320,3 +320,6 @@ examples/hello.ts
   (включая `LIT`, `DEO`, `BRK`, `DEC`) с аналогиями и примерами.
 - [`../README.md`](../README.md) — общее описание проекта, структура и команды.
 
+
+
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/kichman/vmjs?utm_source=readme&utm_medium=badge)
