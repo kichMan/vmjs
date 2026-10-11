@@ -1,7 +1,6 @@
 // ============================================================================
 // Файл: opcodes/immediate-ops.ts
-// Immediate-опкоды семейства базового опкода 0x00 (BRK/LIT/LIT2/LITr/LIT2r),
-// а также неканонический расширенный опкод DEC.
+// Immediate-опкоды семейства базового опкода 0x00 (BRK/LIT/LIT2/LITr/LIT2r).
 //
 // Канон Uxn: базовый опкод 0x00 — это целое семейство, где старшие биты
 // выбирают конкретную операцию (как в switch(instr & 0x1f) -> case 0x00 в uxn.c):
@@ -88,6 +87,8 @@ export function opImmediate(vm: VMState, op: number, pc: number): number | null 
         return useReturn ? opLitr(vm, pc) : opLit(vm, pc);
     }
 
-
+    // Прочие immediate-опкоды базового 0x00 (JCI/JMI/JSI) не реализованы.
+    // Явно сообщаем об этом, чтобы не превращать их в тихий no-op.
+    console.warn(`Immediate-опкод не реализован: 0x${op.toString(16)}`);
     return pc;
 }

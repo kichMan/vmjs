@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "npm run build && node dist/examples/hello.js",
     "dev": "tsc --watch",
+    "test": "npm run build && node tests/canonical.test.mjs",
     "clean": "rm -rf dist"
   },
   "keywords": [

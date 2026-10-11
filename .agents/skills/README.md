@@ -11,7 +11,7 @@
 | Обзор проекта | архитектура в целом | [`project-overview/SKILL.md`](./project-overview/SKILL.md) |
 | Ядро ВМ | `src/uxn-vm.ts`, `src/stack.ts`, `src/uxn-types.ts` | [`vm-core/SKILL.md`](./vm-core/SKILL.md) |
 | Опкоды | `src/opcodes/*` (базовые), `src/opcode-table.ts` | [`opcodes/SKILL.md`](./opcodes/SKILL.md) |
-| Immediate-опкоды | `src/opcodes/immediate-ops.ts` (`LIT*`, `DEC`) | [`immediate-opcodes/SKILL.md`](./immediate-opcodes/SKILL.md) |
+| Immediate-опкоды | `src/opcodes/immediate-ops.ts` (`LIT*`) | [`immediate-opcodes/SKILL.md`](./immediate-opcodes/SKILL.md) |
 | Драйвер устройств | `src/Device.ts`, `src/ConsoleDevice.ts`, `src/uxn-types.ts` | [`driver-devices/SKILL.md`](./driver-devices/SKILL.md) |
 | Сборка и тулинг | `package.json`, `tsconfig.json`, ESM | [`build-and-tooling/SKILL.md`](./build-and-tooling/SKILL.md) |
 | Примеры | `examples/*` | [`examples/SKILL.md`](./examples/SKILL.md) |

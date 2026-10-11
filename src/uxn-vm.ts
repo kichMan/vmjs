@@ -63,19 +63,14 @@ export class Uxn implements VMState {
         const baseOp = op & 0x1f;  // Младшие 5 бит - базовая операция
         const flags = this.extractFlags(op);
 
-        // Базовый опкод 0x00 — это семейство BRK/LIT/LIT2/LITr/LIT2r (и
-        // неканонический DEC на байте 0x20). Чистый 0x00 — это BRK и
-        // обрабатывается таблицей; любой другой опкод с baseOp == 0x00
-        // является immediate-опкодом.
+        // Базовый опкод 0x00 — это семейство BRK/LIT/LIT2/LITr/LIT2r. Чистый
+        // 0x00 — это BRK и обрабатывается таблицей; любой другой опкод с
+        // baseOp == 0x00 является immediate-опкодом.
         if (baseOp === 0x00 && op !== 0x00) {
             return opImmediate(this, op, pc);
         }
 
         const handler = OPCODE_TABLE[baseOp];
-        if (!handler) {
-            console.warn(`Неизвестный опкод: 0x${op.toString(16)}`);
-            return pc;
-        }
         return handler(this, flags, pc);
     }
 }

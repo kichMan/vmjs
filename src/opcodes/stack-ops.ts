@@ -17,33 +17,31 @@ import {
  */
 export function opInc(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const value = popShort(stack);
         const result = (value + 1) & 0xffff;
-        if (!flags.keep) {
-            pushShort(stack, result);
-        } else {
-            stack.index = (stack.index - 2) & 0xff;
-            pushShort(stack, result);
-        }
+        if (flags.keep) stack.index = sp;
+        pushShort(stack, result);
     } else {
         const value = popByte(stack);
         const result = (value + 1) & 0xff;
-        if (!flags.keep) {
-            pushByte(stack, result);
-        } else {
-            stack.index = (stack.index - 1) & 0xff;
-            pushByte(stack, result);
-        }
+        if (flags.keep) stack.index = sp;
+        pushByte(stack, result);
     }
     return pc;
 }
 
 /**
  * 0x02: POP - удалить вершину стека
+ * При флаге KEEP ничего не удаляется (канон: операнды сохраняются).
  */
 export function opPop(vm: VMState, flags: OpcodeFlags, pc: number): number {
+    if (flags.keep) {
+        return pc;
+    }
+
     const stack = getStack(vm, flags);
 
     if (flags.short) {
@@ -59,15 +57,18 @@ export function opPop(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opNip(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
-        const top = popShort(stack);
-        popShort(stack);
-        pushShort(stack, top);
+        const b = popShort(stack);   // вершина
+        popShort(stack);             // нижележащий элемент (отбрасывается)
+        if (flags.keep) stack.index = sp;
+        pushShort(stack, b);
     } else {
-        const top = popByte(stack);
+        const b = popByte(stack);
         popByte(stack);
-        pushByte(stack, top);
+        if (flags.keep) stack.index = sp;
+        pushByte(stack, b);
     }
     return pc;
 }
@@ -77,15 +78,18 @@ export function opNip(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opSwp(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const a = popShort(stack);
         const b = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, a);
         pushShort(stack, b);
     } else {
         const a = popByte(stack);
         const b = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a);
         pushByte(stack, b);
     }
@@ -97,11 +101,13 @@ export function opSwp(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opRot(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const a = popShort(stack);
         const b = popShort(stack);
         const c = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, b);
         pushShort(stack, a);
         pushShort(stack, c);
@@ -109,6 +115,7 @@ export function opRot(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const a = popByte(stack);
         const b = popByte(stack);
         const c = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, b);
         pushByte(stack, a);
         pushByte(stack, c);
@@ -121,13 +128,16 @@ export function opRot(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opDup(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const value = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, value);
         pushShort(stack, value);
     } else {
         const value = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, value);
         pushByte(stack, value);
     }
@@ -139,16 +149,19 @@ export function opDup(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opOvr(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const a = popShort(stack);
         const b = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, b);
         pushShort(stack, a);
         pushShort(stack, b);
     } else {
         const a = popByte(stack);
         const b = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, b);
         pushByte(stack, a);
         pushByte(stack, b);
@@ -158,16 +171,20 @@ export function opOvr(vm: VMState, flags: OpcodeFlags, pc: number): number {
 
 /**
  * 0x0F: STH - сохранить в другой стек
+ * При флаге KEEP значение остаётся в исходном стеке, в другой кладётся копия.
  */
 export function opSth(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const srcStack = getStack(vm, flags);
     const dstStack = flags.returnStack ? vm.stack : vm.ret;
+    const sp = srcStack.index;
 
     if (flags.short) {
         const value = popShort(srcStack);
+        if (flags.keep) srcStack.index = sp;
         pushShort(dstStack, value);
     } else {
         const value = popByte(srcStack);
+        if (flags.keep) srcStack.index = sp;
         pushByte(dstStack, value);
     }
     return pc;

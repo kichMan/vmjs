@@ -6,19 +6,33 @@
 import type { OpcodeFlags, VMState } from '../uxn-types.js';
 import { getStack, popByte, popShort, pushByte, pushShort } from '../stack.js';
 
+/******************************************************************
+ * Общий шаблон реализации бинарных опкодов с поддержкой KEEP:
+ *
+ *   const stack = getStack(vm, flags);
+ *   const sp = stack.index;                 // запомнить указатель
+ *   const b = pop(...); const a = pop(...); // снять операнды
+ *   const result = ...;                     // вычислить
+ *   if (flags.keep) stack.index = sp;       // вернуть операнды (KEEP)
+ *   push(...);                              // положить результат
+ ******************************************************************/
+
 /**
  * 0x08: EQU - сравнение на равенство
  */
 export function opEqu(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a === b ? 1 : 0);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a === b ? 1 : 0);
     }
     return pc;
@@ -29,14 +43,17 @@ export function opEqu(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opNeq(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a !== b ? 1 : 0);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a !== b ? 1 : 0);
     }
     return pc;
@@ -47,14 +64,17 @@ export function opNeq(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opGth(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a > b ? 1 : 0);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a > b ? 1 : 0);
     }
     return pc;
@@ -65,14 +85,17 @@ export function opGth(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opLth(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a < b ? 1 : 0);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a < b ? 1 : 0);
     }
     return pc;
@@ -83,14 +106,17 @@ export function opLth(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opAdd(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (a + b) & 0xffff);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, (a + b) & 0xff);
     }
     return pc;
@@ -101,14 +127,17 @@ export function opAdd(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opSub(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (a - b) & 0xffff);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, (a - b) & 0xff);
     }
     return pc;
@@ -119,14 +148,17 @@ export function opSub(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opMul(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (a * b) & 0xffff);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, (a * b) & 0xff);
     }
     return pc;
@@ -137,14 +169,17 @@ export function opMul(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opDiv(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, b !== 0 ? (Math.floor(a / b)) & 0xffff : 0);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, b !== 0 ? (Math.floor(a / b)) & 0xff : 0);
     }
     return pc;
@@ -155,14 +190,17 @@ export function opDiv(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opAnd(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, a & b);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a & b);
     }
     return pc;
@@ -173,14 +211,17 @@ export function opAnd(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opOra(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, a | b);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a | b);
     }
     return pc;
@@ -191,14 +232,17 @@ export function opOra(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opEor(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const b = popShort(stack);
         const a = popShort(stack);
+        if (flags.keep) stack.index = sp;
         pushShort(stack, a ^ b);
     } else {
         const b = popByte(stack);
         const a = popByte(stack);
+        if (flags.keep) stack.index = sp;
         pushByte(stack, a ^ b);
     }
     return pc;
@@ -209,6 +253,7 @@ export function opEor(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opSft(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const shift = popByte(stack);
@@ -216,6 +261,7 @@ export function opSft(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const rightShift = shift & 0x0f;
         const leftShift = (shift >> 4) & 0x0f;
         const result = ((value >> rightShift) << leftShift) & 0xffff;
+        if (flags.keep) stack.index = sp;
         pushShort(stack, result);
     } else {
         const shift = popByte(stack);
@@ -223,6 +269,7 @@ export function opSft(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const rightShift = shift & 0x0f;
         const leftShift = (shift >> 4) & 0x0f;
         const result = ((value >> rightShift) << leftShift) & 0xff;
+        if (flags.keep) stack.index = sp;
         pushByte(stack, result);
     }
     return pc;

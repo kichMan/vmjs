@@ -23,9 +23,18 @@
 | `npm run build` | `tsc` — компиляция в `dist/` |
 | `npm start` | `npm run build && node dist/examples/hello.js` |
 | `npm run dev` | `tsc --watch` |
+| `npm run test` | `npm run build && node tests/canonical.test.mjs` |
 | `npm run clean` | `rm -rf dist` |
 
 - devDependencies: `typescript` (`^5.6.0`), `@types/node`.
+
+### Тесты
+
+- Каталог `tests/`, единственный файл `tests/canonical.test.mjs` — простой скрипт
+  без фреймворка (использует встроенный `node:assert/strict`).
+- Файл `.mjs` **не** компилируется `tsc` (в `include` только `.ts`) и работает
+  против собранных артефактов в `dist/` (как пример).
+- Запуск: `npm run test` (сначала сборка, затем прогон).
 
 ### tsconfig.json
 
@@ -59,6 +68,7 @@
 ```bash
 npm install
 npm run build            # без ошибок
+npm run test             # канонические кейсы — все зелёные
 node dist/examples/hello.js
 ```
 

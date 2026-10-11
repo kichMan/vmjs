@@ -24,15 +24,15 @@ interface Device {
 
 - Устройство получает `VMState` (не класс `Uxn`).
 - Порт (`target`) — адрес в диапазоне `0x00..0xff` (256 байт `vm.dev`).
-- `deo` возвращает `false`, если ВМ должна остановиться; тогда `opDeo` вернёт
-  PC `-1`.
+- `deo` возвращает `false`, если ВМ должна остановиться; тогда `opDeo` возвращает
+  `null` (как `BRK`), и `Uxn.run()` корректно завершается.
 
 ### Как устройство вызывается
 
 - `opDei` кладёт на стек `vm.dev[addr]` после вызова `device.dei(vm, addr)`.
   В `SHORT` (`DEI2`) читаются два соседних порта.
 - `opDeo` сначала записывает значение в `vm.dev[addr]`, затем вызывает
-  `device.deo(vm, addr)`. Стек: `( value addr -- )`, значение на вершине.
+  `device.deo(vm, addr)`. Стек: `( addr value -- )`, значение на вершине.
 
 ### Пример: `ConsoleDevice`
 
@@ -54,6 +54,7 @@ interface Device {
 
 - Устройство печатает символ: программа `LIT 0x18, LIT char, DEO` выводит `char`.
 - `node dist/examples/hello.js` печатает `Hello` через `ConsoleDevice`.
+- Остановка устройством (`deo -> false`) завершает `run` с корректным PC.
 - `npm run build` без ошибок.
 
 Связанные скилы: `vm-core`, `opcodes`, `examples`.

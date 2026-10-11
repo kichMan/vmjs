@@ -11,15 +11,18 @@ import { getStack, popByte, popShort, pushByte, pushShort } from '../stack.js';
  */
 export function opLdz(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
+    const addr = popByte(stack);
 
     if (flags.short) {
-        const addr = popByte(stack);
         const hi = vm.ram[addr & 0xff];
         const lo = vm.ram[(addr + 1) & 0xff];
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (hi << 8) | lo);
     } else {
-        const addr = popByte(stack);
-        pushByte(stack, vm.ram[addr & 0xff]);
+        const value = vm.ram[addr & 0xff];
+        if (flags.keep) stack.index = sp;
+        pushByte(stack, value);
     }
     return pc;
 }
@@ -29,6 +32,7 @@ export function opLdz(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opStz(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const value = popShort(stack);
@@ -40,6 +44,8 @@ export function opStz(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const addr = popByte(stack);
         vm.ram[addr & 0xff] = value;
     }
+
+    if (flags.keep) stack.index = sp;
     return pc;
 }
 
@@ -48,19 +54,20 @@ export function opStz(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opLdr(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
+    const offset = popByte(stack);
+    const signedOffset = offset > 127 ? offset - 256 : offset;
+    const addr = (pc + signedOffset) & 0xffff;
 
     if (flags.short) {
-        const offset = popByte(stack);
-        const signedOffset = offset > 127 ? offset - 256 : offset;
-        const addr = (pc + signedOffset) & 0xffff;
         const hi = vm.ram[addr];
         const lo = vm.ram[(addr + 1) & 0xffff];
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (hi << 8) | lo);
     } else {
-        const offset = popByte(stack);
-        const signedOffset = offset > 127 ? offset - 256 : offset;
-        const addr = (pc + signedOffset) & 0xffff;
-        pushByte(stack, vm.ram[addr]);
+        const value = vm.ram[addr];
+        if (flags.keep) stack.index = sp;
+        pushByte(stack, value);
     }
     return pc;
 }
@@ -70,6 +77,7 @@ export function opLdr(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opStr(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const value = popShort(stack);
@@ -85,6 +93,8 @@ export function opStr(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const addr = (pc + signedOffset) & 0xffff;
         vm.ram[addr] = value;
     }
+
+    if (flags.keep) stack.index = sp;
     return pc;
 }
 
@@ -93,15 +103,18 @@ export function opStr(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opLda(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
+    const addr = popShort(stack);
 
     if (flags.short) {
-        const addr = popShort(stack);
         const hi = vm.ram[addr];
         const lo = vm.ram[(addr + 1) & 0xffff];
+        if (flags.keep) stack.index = sp;
         pushShort(stack, (hi << 8) | lo);
     } else {
-        const addr = popShort(stack);
-        pushByte(stack, vm.ram[addr]);
+        const value = vm.ram[addr];
+        if (flags.keep) stack.index = sp;
+        pushByte(stack, value);
     }
     return pc;
 }
@@ -111,6 +124,7 @@ export function opLda(vm: VMState, flags: OpcodeFlags, pc: number): number {
  */
 export function opSta(vm: VMState, flags: OpcodeFlags, pc: number): number {
     const stack = getStack(vm, flags);
+    const sp = stack.index;
 
     if (flags.short) {
         const value = popShort(stack);
@@ -122,5 +136,7 @@ export function opSta(vm: VMState, flags: OpcodeFlags, pc: number): number {
         const addr = popShort(stack);
         vm.ram[addr] = value;
     }
+
+    if (flags.keep) stack.index = sp;
     return pc;
 }
