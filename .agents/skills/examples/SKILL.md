@@ -6,7 +6,7 @@
 
 ## Область
 
-- `examples/hello.ts` — пример вывода строки `Hello` и демонстрация `DEC`.
+- `examples/hello.ts` — пример вывода строки `Hello`.
 - `examples/README.md` — разбор примера (API, зависимости, опкоды).
 
 ## Ключевые факты
@@ -40,10 +40,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 
 `main()` выполняется только при запуске файла напрямую, не при импорте.
 
-### Демонстрация `DEC`
 
-Отдельная программа `LIT 0x41; DEC; BRK` уменьшает `'A'` до `'@'` (`0x40`).
-Перед повторным `run` стек сбрасывается: `vm.stack.index = 0`.
 
 ### Ожидаемый вывод
 
@@ -52,12 +49,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 
 Hello
 Программа завершена. Финальный PC: 0x11a
-DEC: 'A'(0x41) -> 0x40 (ожидается 0x40 '@')
 ```
 
 ## Правила
 
-- Использовать константы опкодов (`OP_LIT`, `OP_DEO`, `OP_BRK`, `OP_DEC`) вместо
+- Использовать константы опкодов (`OP_LIT`, `OP_DEO`, `OP_BRK`) вместо
   «магических чисел».
 - Загружать байт-код в `vm.ram` начиная с `0x0100`.
 - Обязательно завершать программу `BRK`.
@@ -69,7 +65,7 @@ DEC: 'A'(0x41) -> 0x40 (ожидается 0x40 '@')
 
 ```bash
 npm run build
-node dist/examples/hello.js   # должен печатать Hello и результат DEC
+node dist/examples/hello.js   # должен печатать Hello
 ```
 
 При сверке финального PC помните: `BRK` возвращает PC за собой.

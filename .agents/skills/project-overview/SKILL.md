@@ -14,7 +14,7 @@
 - **Что это:** интерпретатор стековой виртуальной машины Uxn (Hundred Rabbits).
 - **Язык:** TypeScript (строгий режим), модули ESM (`"type": "module"`).
 - **Зависимостей в рантайме нет**: только `typescript` и `@types/node` как dev.
-- **Опкоды:** 32 базовых слота `0x00..0x1f` + семейство `LIT*` + расширение `DEC`.
+- **Опкоды:** 32 базовых слота `0x00..0x1f` + семейство `LIT*`.
 
 ### Карта модулей
 
@@ -26,7 +26,7 @@
 | `src/uxn-vm.ts` | Класс `Uxn implements VMState`: состояние, `run(pc)`, диспетчер `executeOp`. |
 | `src/opcode-table.ts` | Таблица `OPCODE_TABLE` (ключ — базовый опкод `0x00..0x1f`). |
 | `src/opcodes/*` | Реализация опкодов по группам (см. скил `opcodes`). |
-| `src/opcodes/immediate-ops.ts` | `LIT/LIT2/LITr/LIT2r` и расширение `DEC` (см. скил `immediate-opcodes`). |
+| `src/opcodes/immediate-ops.ts` | `LIT/LIT2/LITr/LIT2r` (см. скил `immediate-opcodes`). |
 | `src/ConsoleDevice.ts` | Пример устройства вывода в консоль (см. скил `driver-devices`). |
 | `src/index.ts` | Публичный API (баррель). |
 | `examples/hello.ts` | Пример запуска ВМ (см. скил `examples`). |
@@ -56,7 +56,7 @@ uxn-types.ts  <--  stack.ts
 
 - Не вводить цикл зависимостей: опкоды и устройства не импортируют класс `Uxn`.
 - Не изменять поведение опкодов без явного запроса: проект придерживается канона
-  Uxn, отклонения (`DEC`) помечены и задокументированы.
+  Uxn.
 - Импорты внутри `src/` указывают расширение `.js` (требование NodeNext).
 - Держать типы в `uxn-types.ts`, а не разбрасывать по модулям.
 

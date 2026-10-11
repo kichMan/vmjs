@@ -7,7 +7,7 @@
 
 ## Область
 
-- `src/opcodes/stack-ops.ts` — `INC DEC POP NIP SWP ROT DUP OVR STH`
+- `src/opcodes/stack-ops.ts` — `INC POP NIP SWP ROT DUP OVR STH`
 - `src/opcodes/flow-ops.ts` — `BRK JMP JCN JSR`
 - `src/opcodes/mem-ops.ts` — `LDZ STZ LDR STR LDA STA`
 - `src/opcodes/dev-ops.ts` — `DEI DEO`
@@ -56,7 +56,7 @@
 - Не занимать базовый слот `0x00` обычным опкодом: этот слот принадлежит семейству
   `BRK/LIT*` (см. скил `immediate-opcodes`).
 - Все 32 базовых слота `0x00..0x1f` уже заняты — расширения возможны только на
-  байтах с `baseOp == 0x00` (как `DEC`).
+  байтах с `baseOp == 0x00`.
 
 ## Проверка
 

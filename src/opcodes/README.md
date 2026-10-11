@@ -6,7 +6,7 @@
 
 ![Uxn](https://img.shields.io/badge/Uxn-0K-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-ES2022-3178c6)
-![Опкоды](https://img.shields.io/badge/Опкоды-32%20%2B%20LIT%20%2B%20DEC-success)
+![Опкоды](https://img.shields.io/badge/Опкоды-32%20%2B%20LIT-success)
 
 </div>
 
@@ -23,14 +23,14 @@
 
 | Файл | Опкоды | Назначение |
 |------|--------|------------|
-| [`stack-ops.ts`](./stack-ops.ts) | `INC` `DEC` `POP` `NIP` `SWP` `ROT` `DUP` `OVR` `STH` | Работа со стеками |
+| [`stack-ops.ts`](./stack-ops.ts) | `INC` `POP` `NIP` `SWP` `ROT` `DUP` `OVR` `STH` | Работа со стеками |
 | [`flow-ops.ts`](./flow-ops.ts) | `BRK` `JMP` `JCN` `JSR` | Управление потоком |
 | [`mem-ops.ts`](./mem-ops.ts) | `LDZ` `STZ` `LDR` `STR` `LDA` `STA` | Доступ к памяти |
 | [`dev-ops.ts`](./dev-ops.ts) | `DEI` `DEO` | Доступ к устройствам |
 | [`algebra-ops.ts`](./algebra-ops.ts) | `EQU` `NEQ` `GTH` `LTH` `ADD` `SUB` `MUL` `DIV` `AND` `ORA` `EOR` `SFT` | Сравнения и арифметика |
-| [`immediate-ops.ts`](./immediate-ops.ts) | `LIT` `LIT2` `LITr` `LIT2r` `DEC*` | Литералы и расширения |
+| [`immediate-ops.ts`](./immediate-ops.ts) | `LIT` `LIT2` `LITr` `LIT2r` | Литералы |
 
-`*` `DEC` — неканоническое расширение (см. раздел ниже).
+
 
 ---
 
@@ -1245,20 +1245,7 @@ pc += 2;
 
 ---
 
-### `DEC` · `0x20` · декремент (расширение)
 
-**Описание.** Неканоническое расширение (слот `JCI`). Полностью описан в
-разделе **`stack-ops.ts` -> DEC** выше.
-
-> **Когда пригодится.** Задача полностью совпадает с `DEC` из `stack-ops.ts`
-> (обратный отсчёт); здесь приведена лишь справка по байтовому кодированию.
-
-**Пример (Uxntal):**
-```uxntal
-#05 DEC   ( 05 -- 04 )
-```
-
----
 
 ## Сводная таблица байтов
 
@@ -1296,7 +1283,7 @@ pc += 2;
 | `0x1D` | `ORA` | логика | `algebra-ops.ts` |
 | `0x1E` | `EOR` | логика | `algebra-ops.ts` |
 | `0x1F` | `SFT` | логика | `algebra-ops.ts` |
-| `0x20` | `DEC` | ⚠️ расширение (неканон) | `stack-ops.ts` / `immediate-ops.ts` |
+
 | `0x80` | `LIT` | immediate | `immediate-ops.ts` |
 | `0xA0` | `LIT2` | immediate | `immediate-ops.ts` |
 | `0xC0` | `LITr` | immediate | `immediate-ops.ts` |

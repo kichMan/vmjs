@@ -7,7 +7,7 @@
 // выбирают конкретную операцию (как в switch(instr & 0x1f) -> case 0x00 в uxn.c):
 //
 //   0x00  BRK        остановка (обрабатывается OPCODE_TABLE, см. opBrk)
-//   0x20  (JCI)      в этой ВМ НЕ реализован -> слот отдан под расширение DEC
+//   0x20  (JCI)      не реализован
 //   0x40  (JMI)      не реализован
 //   0x60  (JSI)      не реализован
 //   0x80  LIT   -> M[PC]'   , PC += 1
@@ -20,19 +20,13 @@
 
 import type { VMState } from '../uxn-types.js';
 import { pushByte, pushShort } from '../stack.js';
-import { opDec } from './stack-ops.js';
 
 // Значения старших бит для immediate-семейства (базовый опкод 0x00)
 const LIT_SHORT_FLAG = 0x20;    // "2": читать два байта
 const LIT_RETURN_FLAG = 0x40;   // "r": писать в стек возвратов
 const LIT_BIT = 0x80;           // признак LIT-семейства
 
-/**
- * Неканонический байт расширения DEC.
- * В каноне Uxn этот байт (0x20) — JCI; JCI в этой ВМ не реализован,
- * поэтому слот используется под операцию декремента.
- */
-export const DEC_OPCODE = 0x20;
+
 
 // ----------------------------------------------------------------------------
 // LIT / LIT2 / LITr / LIT2r
@@ -94,17 +88,6 @@ export function opImmediate(vm: VMState, op: number, pc: number): number | null 
         return useReturn ? opLitr(vm, pc) : opLit(vm, pc);
     }
 
-    // Неканоническое расширение DEC (слот JCI).
-    // Байт 0x20 содержит бит 0x20 (keep) в силу нумерации, поэтому флаги не
-    // декодируются из него, а задаются явно: байтовый декремент рабочего стека.
-    if (op === DEC_OPCODE) {
-        return opDec(vm, {
-            short: false,
-            returnStack: false,
-            keep: false,
-        }, pc);
-    }
 
-    console.warn(`Неизвестный immediate-опкод: 0x${op.toString(16)}`);
     return pc;
 }

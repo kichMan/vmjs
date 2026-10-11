@@ -41,37 +41,6 @@ export function opInc(vm: VMState, flags: OpcodeFlags, pc: number): number {
 }
 
 /**
- * 0x20 (РАСШИРЕНИЕ, неканонический Uxn): DEC - декремент вершины стека.
- * Зеркально повторяет opInc (учитывает флаги short/keep/returnStack).
- * В каноне Uxn отдельного опкода DEC нет (вычитается через #01 SUB); слот 0x20
- * в этой ВМ свободен, т.к. immediate-опкод JCI здесь не реализован.
- */
-export function opDec(vm: VMState, flags: OpcodeFlags, pc: number): number {
-    const stack = getStack(vm, flags);
-
-    if (flags.short) {
-        const value = popShort(stack);
-        const result = (value - 1) & 0xffff;
-        if (!flags.keep) {
-            pushShort(stack, result);
-        } else {
-            stack.index = (stack.index - 2) & 0xff;
-            pushShort(stack, result);
-        }
-    } else {
-        const value = popByte(stack);
-        const result = (value - 1) & 0xff;
-        if (!flags.keep) {
-            pushByte(stack, result);
-        } else {
-            stack.index = (stack.index - 1) & 0xff;
-            pushByte(stack, result);
-        }
-    }
-    return pc;
-}
-
-/**
  * 0x02: POP - удалить вершину стека
  */
 export function opPop(vm: VMState, flags: OpcodeFlags, pc: number): number {

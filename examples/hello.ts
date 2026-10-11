@@ -18,7 +18,6 @@ import { ConsoleDevice } from '../src/ConsoleDevice.js';
 const ADDR_CONSOLE = 0x18;  // Стандартный адрес вывода консоли (байт)
 const OP_LIT = 0x80;        // LIT: загрузить байт из программы на стек
 const OP_DEO = 0x17;        // DEO: запись в устройство
-const OP_DEC = 0x20;        // DEC (расширение): декремент вершины стека
 const OP_BRK = 0x00;        // BRK: остановка
 
 /**
@@ -56,18 +55,7 @@ function main() {
     const finalPc = vm.run(0x0100);
     console.log(`\nПрограмма завершена. Финальный PC: 0x${finalPc.toString(16)}`);
 
-    // Демонстрация DEC: LIT 0x41 ('A'), DEC -> 'A' - 1 == '@'
-    const decProgram: number[] = [
-        OP_LIT, 0x41,
-        OP_DEC,
-        OP_BRK,
-    ];
-    decProgram.forEach((byte, i) => {
-        vm.ram[0x0100 + i] = byte;
-    });
-    vm.stack.index = 0;
-    vm.run(0x0100);
-    console.log(`DEC: 'A'(0x41) -> 0x${vm.stack.data[(vm.stack.index - 1) & 0xff].toString(16)} (ожидается 0x40 '@')`);
+
 }
 
 // Запуск только если этот файл является точкой входа (не при импорте)
